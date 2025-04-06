@@ -15,14 +15,13 @@ ap.add_argument("-c", "--captures", required=True,
 args = vars(ap.parse_args())
 
 # ChAruco board variables
-CHARUCOBOARD_ROWCOUNT = 7
-CHARUCOBOARD_COLCOUNT = 5 
-ARUCO_DICT = aruco.Dictionary_get(aruco.DICT_5X5_50)
+CHARUCOBOARD_ROWCOUNT = 6
+CHARUCOBOARD_COLCOUNT = 8 
+ARUCO_DICT = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 
 # Create constants to be passed into OpenCV and Aruco methods
-CHARUCO_BOARD = aruco.CharucoBoard_create(
-	squaresX=CHARUCOBOARD_COLCOUNT,
-	squaresY=CHARUCOBOARD_ROWCOUNT,
+CHARUCO_BOARD = aruco.CharucoBoard(
+	size=(CHARUCOBOARD_ROWCOUNT, CHARUCOBOARD_COLCOUNT),
 	squareLength=0.04,
 	markerLength=0.02,
 	dictionary=ARUCO_DICT)

@@ -20,6 +20,10 @@ else:
     if cameraMatrix is None or distCoeffs is None:
         print("Calibration issue. Remove ./calibration/CameraCalibration.pckl and recalibrate your camera with calibration_ChAruco.py.")
         exit()
+    else:
+        # Print matrix and distortion coefficient to the console
+        print("Camera intrinsic parameters matrix:\n{}".format(cameraMatrix))
+        print("\nCamera distortion coefficients:\n{}".format(distCoeffs))
 
 def drawCube(img, corners, imgpts):
     imgpts = np.int32(imgpts).reshape(-1,2)
@@ -37,13 +41,12 @@ def drawCube(img, corners, imgpts):
     return img
 
 # Constant parameters used in Aruco methods
-ARUCO_PARAMETERS = aruco.DetectorParameters_create()
-ARUCO_DICT = aruco.Dictionary_get(aruco.DICT_5X5_50)
+ARUCO_PARAMETERS = aruco.DetectorParameters()
+ARUCO_DICT = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 
 # Create grid board object we're using in our stream
-board = aruco.GridBoard_create(
-        markersX=1,
-        markersY=1,
+board = aruco.GridBoard(
+        size=(1, 1),
         markerLength=0.09,
         markerSeparation=0.01,
         dictionary=ARUCO_DICT)
@@ -56,7 +59,7 @@ axis = np.float32([[-.5,-.5,0], [-.5,.5,0], [.5,.5,0], [.5,-.5,0],
 # Make output image fullscreen
 cv2.namedWindow('ProjectImage',cv2.WINDOW_NORMAL)
 
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(2, cv2.CAP_DSHOW)
 cam.set(cv2.CAP_PROP_AUTOFOCUS, 0)
 cam.set(3, 1280)
 cam.set(4, 720)
@@ -100,7 +103,9 @@ while(cam.isOpened()):
                     except:
                         continue
                 else:    
-                    ProjectImage = aruco.drawAxis(ProjectImage, cameraMatrix, distCoeffs, rvec, tvec, 1)
+                    ProjectImage = cv2.drawFrameAxes(ProjectImage, cameraMatrix, distCoeffs, rvec, tvec, 1)
+                    # old syntax
+                    # ProjectImage = aruco.drawAxis(ProjectImage, cameraMatrix, distCoeffs, rvec, tvec, 1)
 
         cv2.imshow('ProjectImage', ProjectImage)
 
